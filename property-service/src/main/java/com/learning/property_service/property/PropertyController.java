@@ -24,18 +24,18 @@ public class PropertyController {
 	}
 
 	@GetMapping
-	public List<Property> findAll() {
+	public List<PropertyResponse> findAll() {
 		return service.findAll();
 	}
 
 	@GetMapping("/{id}")
-	public Property findById(@PathVariable Long id) {
+	public PropertyResponse findById(@PathVariable Long id) {
 		return service.findById(id);
 	}
 
 	@PostMapping
-	public ResponseEntity<Property> create(@Valid @RequestBody CreatePropertyRequest request) {
-		Property created = service.create(request);
+	public ResponseEntity<PropertyResponse> create(@Valid @RequestBody CreatePropertyRequest request) {
+		PropertyResponse created = service.create(request);
 		return ResponseEntity.created(URI.create("/properties/" + created.id())).body(created);
 	}
 }

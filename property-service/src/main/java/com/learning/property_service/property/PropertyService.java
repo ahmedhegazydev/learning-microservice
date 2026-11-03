@@ -3,6 +3,7 @@ package com.learning.property_service.property;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PropertyService {
@@ -13,15 +14,21 @@ public class PropertyService {
 		this.repository = repository;
 	}
 
-	public Property create(CreatePropertyRequest request) {
-		return repository.save(request.title().trim(), request.city().trim(), request.price());
+	@Transactional
+	public PropertyResponse create(CreatePropertyRequest request) {
+		Property property = new Property(request.title().trim(), request.city().trim(), request.price());
+		return PropertyResponse.from(repository.save(property));
 	}
 
-	public List<Property> findAll() {
-		return repository.findAll();
+	@Transactional(readOnly = true)
+	public List<PropertyResponse> findAll() {
+		return repository.findAll().stream().map(PropertyResponse::from).toList();
 	}
 
-	public Property findById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new PropertyNotFoundException(id));
+	@Transactional(readOnly = true)
+	public PropertyResponse findById(Long id) {
+		return repository.findById(id)
+				.map(PropertyResponse::from)
+				.orElseThrow(() -> new PropertyNotFoundException(id));
 	}
 }
